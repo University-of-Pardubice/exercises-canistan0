@@ -1,0 +1,65 @@
+import copy
+
+class State:
+    """ Puzzle state for the 15-puzzle
+
+    gameplan - two-dimensional array (4x4 grid)
+               - numbers 1–15
+               - 0 = empty space
+    row      - row position of the space (for faster searching)
+    column   - column position of the space
+    """
+
+    generated = 0  # counter for number of states created
+
+    def __init__(self, gameplan, row, column):
+        # check that the position matches the empty space
+        assert (gameplan[row][column] == 0), "The empty space position is incorrect!"
+        
+        # deep copy the puzzle state
+        self.gameplan = copy.deepcopy(gameplan)
+        self.row = row
+        self.column = column
+
+        State.generated += 1
+
+    
+
+    def expand(self, action):
+        """ Return a new State after moving the empty space in a given direction.
+        
+        action - one of 'l' (left), 'r' (right), 'u' (up), 'd' (down)
+        
+        If the action is invalid, return None.
+        """
+        if action == 'l':
+            if self.column > 0:
+                new_gameplan = copy.deepcopy(self.gameplan)
+                new_gameplan[self.row][self.column] = new_gameplan[self.row][self.column - 1]
+                new_gameplan[self.row][self.column - 1] = 0
+                return State(new_gameplan, self.row, self.column - 1)
+
+        elif action == 'r':
+            if self.column < 3:
+                new_gameplan = copy.deepcopy(self.gameplan)
+                new_gameplan[self.row][self.column] = new_gameplan[self.row][self.column + 1]
+                new_gameplan[self.row][self.column + 1] = 0
+                return State(new_gameplan, self.row, self.column + 1)
+
+        elif action == 'u':
+            if self.row > 0:
+                new_gameplan = copy.deepcopy(self.gameplan)
+                new_gameplan[self.row][self.column] = new_gameplan[self.row - 1][self.column]
+                new_gameplan[self.row - 1][self.column] = 0
+                return State(new_gameplan, self.row - 1, self.column)
+
+        elif action == 'd':
+            if self.row < 3:
+                new_gameplan = copy.deepcopy(self.gameplan)
+                new_gameplan[self.row][self.column] = new_gameplan[self.row + 1][self.column]
+                new_gameplan[self.row + 1][self.column] = 0
+                return State(new_gameplan, self.row + 1, self.column)
+
+def __eq__(self, other):
+        # equality check → only compare board layout
+        return self.gameplan == other.gameplan
